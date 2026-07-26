@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+/* Committed cosmic-neon theme, unconditional — not gated behind
+   prefers-color-scheme. This app picks one bold look on purpose. */
+body {
+  position: relative;
+  background-color: #0a0818;
+  color: #eef0ff;
+  isolation: isolate;
+}
+
+/* Slowly drifting aurora blobs behind everything — pure transform/opacity
+   so it stays GPU-composited and doesn't cost layout/paint on scroll. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+body::before {
+  top: -10%;
+  left: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(255, 61, 129, 0.55), transparent 70%);
+  animation: aurora 18s ease-in-out infinite;
+}
+
+body::after {
+  bottom: -15%;
+  right: -10%;
+  width: 55vw;
+  height: 55vw;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.45), transparent 70%);
+  animation: drift 22s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
+}
+
+/* Frosted-glass surface used by cards/panels floating over the aurora bg. */
+.glass-card {
+  background: rgba(22, 18, 43, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Vertically scrollable Journey Strip should never force page-level overflow */
+.journey-strip {
+  scrollbar-width: thin;
+  scrollbar-color: #ff3d81 transparent;
+}
+.journey-strip::-webkit-scrollbar {
+  width: 6px;
+}
+.journey-strip::-webkit-scrollbar-thumb {
+  background-color: #ff3d81;
+  border-radius: 999px;
+}
+
+.skeleton-shimmer,
+.skeleton-shimmer-dark {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.04) 25%, rgba(255, 255, 255, 0.1) 37%, rgba(255, 255, 255, 0.04) 63%);
+  background-size: 400% 100%;
+}
+
+.neon-text {
+  text-shadow: 0 0 18px rgba(255, 61, 129, 0.5);
+}
+
+.drive-car {
+  offset-path: path("M2,40 C 60,4 120,76 180,40 S 300,4 358,40");
+  offset-rotate: 0deg;
+  animation: drive-along 2.4s linear infinite;
+}
+
+@keyframes drive-along {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drive-car {
+    animation: none;
+    offset-distance: 50%;
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--drift-x), var(--drift-y)) rotate(var(--spin));
+    opacity: 0;
+  }
+}
