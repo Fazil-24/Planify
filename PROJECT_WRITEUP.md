@@ -111,23 +111,10 @@ PlanIFY sits in a real gap: consumer-facing, errand-specific, traffic-aware, sin
 
 ---
 
-## 8. Anticipated interview questions
 
-**"Why didn't you just ask the LLM to order the stops too, in one call?"**
-Because it would have been unreliable and unverifiable. I can unit-test `optimizer.ts` with zero network mocking and get the same answer every time for the same input. I can't do that for an LLM's ordering decision, and a routing app that gives different answers to identical questions loses user trust fast.
 
-**"What happens if TomTom or Geoapify goes down?"**
-Every external call goes through a shared retry-with-backoff wrapper (2 retries, exponential backoff, per-attempt timeout). If it still fails, `/plan` returns a distinguishable error (a 422 naming the specific place that failed to geocode, or a 502 for a genuine upstream failure) rather than a blank screen — the frontend has explicit states for both.
 
-**"How would you scale this to 100,000 users?"**
-The in-memory cache becomes Redis (shared across instances, survives restarts). The backend is already stateless per-request, so it horizontally scales behind Render's load balancer without code changes. The real bottleneck would be TomTom/Geoapify rate limits, which would push toward negotiating a volume contract or adding a queueing layer for matrix requests during traffic spikes.
-
-**"What would you do differently if you had another week?"**
-Persistence (accounts + saved plans), a real transport-mode selector (car/walk/transit — currently hard-defaults to car, a known limitation I flagged rather than hid), and an "optimization emphasis" toggle (speed vs. urgency-weighted) as a genuine lever rather than a cosmetic sort dropdown.
-
----
-
-## 9. Running it locally
+## 8. Running it locally
 
 ```bash
 # Backend
@@ -149,7 +136,7 @@ Run the optimizer's unit tests any time with `cd backend && npm test` — no API
 
 ---
 
-## 10. Sample task lists for manual testing
+## 9. Sample task lists for manual testing
 
 Real, verified-geocodable place names for two very different cities — good for demonstrating that the pipeline isn't hardcoded to one region. Set your start location to a real address in the matching city first (search it, or use "Use my location" if you're actually there).
 
